@@ -1,0 +1,22 @@
+# Секреты — никогда в git
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Docker volumes (локальные данные)
+postgres_data/
+redis_data/
+
+# IDE
+.idea/
+.vscode/
+*.swp
