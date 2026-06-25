@@ -9,7 +9,8 @@ from sqlalchemy import (
     Boolean, CheckConstraint, Float, ForeignKey,
     Integer, String, Text, UniqueConstraint,
 )
-from sqlalchemy.dialects.postgresql import UUID, TIMESTAMPTZ
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import TIMESTAMP
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
@@ -23,7 +24,7 @@ class Organization(Base):
     name:       Mapped[str]        = mapped_column(Text, nullable=False)
     slug:       Mapped[str]        = mapped_column(Text, nullable=False, unique=True)
     timezone:   Mapped[str]        = mapped_column(Text, nullable=False, default="Europe/Moscow")
-    created_at: Mapped[datetime]   = mapped_column(TIMESTAMPTZ, server_default=func.now())
+    created_at: Mapped[datetime]   = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
     users:      Mapped[list["User"]]      = relationship(back_populates="org")
     workshops:  Mapped[list["Workshop"]]  = relationship(back_populates="org")
@@ -40,7 +41,7 @@ class User(Base):
     role:            Mapped[str]       = mapped_column(Text, nullable=False, default="operator")
     full_name:       Mapped[str | None]= mapped_column(Text)
     is_active:       Mapped[bool]      = mapped_column(Boolean, default=True)
-    created_at:      Mapped[datetime]  = mapped_column(TIMESTAMPTZ, server_default=func.now())
+    created_at:      Mapped[datetime]  = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
     org: Mapped["Organization"] = relationship(back_populates="users")
 
@@ -74,7 +75,7 @@ class Equipment(Base):
     is_active:            Mapped[bool]       = mapped_column(Boolean, default=True)
     iot_device_id:        Mapped[str | None] = mapped_column(Text)
     data_source_type:     Mapped[str]        = mapped_column(Text, default="manual")
-    created_at:           Mapped[datetime]   = mapped_column(TIMESTAMPTZ, server_default=func.now())
+    created_at:           Mapped[datetime]   = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
     org:      Mapped["Organization"] = relationship(back_populates="equipment")
     workshop: Mapped["Workshop"]     = relationship(back_populates="equipment")
@@ -92,8 +93,8 @@ class Shift(Base):
     id:                          Mapped[uuid.UUID]      = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     equipment_id:                Mapped[uuid.UUID]      = mapped_column(ForeignKey("equipment.id"))
     operator_id:                 Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
-    shift_start:                 Mapped[datetime]       = mapped_column(TIMESTAMPTZ, nullable=False)
-    shift_end:                   Mapped[datetime]       = mapped_column(TIMESTAMPTZ, nullable=False)
+    shift_start:                 Mapped[datetime]       = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    shift_end:                   Mapped[datetime]       = mapped_column(TIMESTAMP(timezone=True), nullable=False)
     planned_production_time_min: Mapped[float]          = mapped_column(Float, nullable=False)
     total_parts_produced:        Mapped[int]            = mapped_column(Integer, nullable=False)
     good_parts:                  Mapped[int]            = mapped_column(Integer, nullable=False)
@@ -103,7 +104,7 @@ class Shift(Base):
     oee:                         Mapped[float | None]   = mapped_column(Float)
     source:                      Mapped[str]            = mapped_column(Text, default="manual")
     notes:                       Mapped[str | None]     = mapped_column(Text)
-    created_at:                  Mapped[datetime]       = mapped_column(TIMESTAMPTZ, server_default=func.now())
+    created_at:                  Mapped[datetime]       = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
     equipment:       Mapped["Equipment"]          = relationship(back_populates="shifts")
     downtime_events: Mapped[list["DowntimeEvent"]] = relationship(back_populates="shift", cascade="all, delete-orphan")
@@ -122,9 +123,9 @@ class DowntimeEvent(Base):
     reason:     Mapped[str]            = mapped_column(Text, nullable=False)
     minutes:    Mapped[float]          = mapped_column(Float, nullable=False)
     planned:    Mapped[bool]           = mapped_column(Boolean, default=False)
-    started_at: Mapped[datetime | None]= mapped_column(TIMESTAMPTZ)
+    started_at: Mapped[datetime | None]= mapped_column(TIMESTAMP(timezone=True))
     notes:      Mapped[str | None]     = mapped_column(Text)
-    created_at: Mapped[datetime]       = mapped_column(TIMESTAMPTZ, server_default=func.now())
+    created_at: Mapped[datetime]       = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
 
     shift: Mapped["Shift"] = relationship(back_populates="downtime_events")
 
