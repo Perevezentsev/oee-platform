@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api import shifts
+from app.api import shifts, dashboard
 
 
 @asynccontextmanager
@@ -13,7 +13,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="OEE Platform API",
+    title="Monitix API",
     version="0.1.0",
     docs_url="/docs" if settings.debug else None,
     lifespan=lifespan,
@@ -33,4 +33,5 @@ async def health():
     return {"status": "ok", "env": settings.app_env}
 
 
-app.include_router(shifts.router, prefix="/api/v1/shifts", tags=["shifts"])
+app.include_router(shifts.router,    prefix="/api/v1/shifts",    tags=["shifts"])
+app.include_router(dashboard.router, prefix="/api/v1/dashboard", tags=["dashboard"])
