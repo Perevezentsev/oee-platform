@@ -5,7 +5,7 @@ import {
   Tooltip, ResponsiveContainer, ReferenceLine
 } from 'recharts'
 
-const API = 'http://localhost:8000/api/v1'
+const API = "http://192.168.1.193:8000/api/v1"
 const EQUIPMENT_ID = '11111111-1111-1111-1111-111111111111'
 
 const s = {
