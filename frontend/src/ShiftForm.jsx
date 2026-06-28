@@ -92,7 +92,7 @@ const s = {
   },
   oeeGrid: {
     display: 'grid',
-    gridTemplateColumns: "repeat(2, 1fr)",
+    gridTemplateColumns: 'repeat(4, 1fr)',
     gap: 12,
     marginBottom: 16,
   },
@@ -134,7 +134,7 @@ function oeeColor(pct) {
   return 'var(--danger)'
 }
 
-export default function ShiftForm() {
+export default function ShiftForm(props) {
   const now = new Date()
   const pad = n => String(n).padStart(2, '0')
   const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
@@ -160,18 +160,22 @@ export default function ShiftForm() {
   const submit = async () => {
     setLoading(true); setError(null); setResult(null)
     try {
-      const { data } = await axios.post(`${API}/shifts/`, {
-        equipment_id: EQUIPMENT_ID,
-        shift_start:  form.shift_start + ':00',
-        shift_end:    form.shift_end + ':00',
-        planned_production_time_min: Number(form.planned_production_time_min),
-        total_parts_produced: Number(form.total_parts_produced),
-        good_parts:   Number(form.good_parts),
-        notes:        form.notes || null,
-        downtime_events: downtimes
-          .filter(d => d.minutes)
-          .map(d => ({ reason: d.reason, minutes: Number(d.minutes), planned: d.planned })),
-      })
+      const { data } = await axios.post(
+  `${API}/shifts/`,
+  {
+    equipment_id: EQUIPMENT_ID,
+    shift_start:  form.shift_start + ':00',
+    shift_end:    form.shift_end + ':00',
+    planned_production_time_min: Number(form.planned_production_time_min),
+    total_parts_produced: Number(form.total_parts_produced),
+    good_parts:   Number(form.good_parts),
+    notes:        form.notes || null,
+    downtime_events: downtimes.filter(d => d.minutes).map(d => ({ reason: d.reason, minutes: Number(d.minutes), planned: d.planned })),
+  },
+  {
+    headers: { Authorization: `Bearer ${props.token}` }
+  }
+)
       setResult(data)
     } catch (e) {
       setError(e.response?.data?.detail || e.message)
@@ -262,7 +266,7 @@ export default function ShiftForm() {
                   style={{ width: 'auto' }} />
                 <label htmlFor={`p${i}`} style={{ fontSize: 12, color: 'var(--muted)' }}>
                   Плановый
-                </label>
+                </label>nano ~/oee-platform/frontend/src/index.css
               </div>
             </div>
           ))}

@@ -113,18 +113,16 @@ const CustomTooltip = ({ active, payload, label }) => {
   )
 }
 
-export default function Dashboard() {
+export default function Dashboard(props) {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
   useEffect(() => {
-    axios.get(`${API}/dashboard/${EQUIPMENT_ID}`)
+    axios.get(`${API}/dashboard/${EQUIPMENT_ID}`, { headers: { Authorization: `Bearer ${props.token}` } })
       .then(r => setData(r.data))
-      .catch(e => setError(JSON.stringify({msg: e.message, code: e.code, url: e.config?.url})))
+      .catch(e => setError(e.message))
       .finally(() => setLoading(false))
   }, [])
-
   if (loading) return <div style={s.loading}>Загрузка данных...</div>
   if (error)   return <div style={s.loading}>Ошибка: {error}</div>
   if (!data)   return <div style={s.loading}>Нет данных</div>
