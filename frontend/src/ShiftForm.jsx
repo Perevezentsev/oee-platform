@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios'
 
-const API = "http://192.168.1.193:8000/api/v1"
+const API = "/api/v1"
 
 // Фиксированный станок для MVP (потом будет dropdown из /equipment)
 const EQUIPMENT_ID = '11111111-1111-1111-1111-111111111111'
@@ -50,7 +50,7 @@ const s = {
     textTransform: 'uppercase',
     letterSpacing: '.04em',
   },
-  row2: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 },
+  row2: { display: 'grid', gridTemplateColumns: '1fr', gap: 12 },
   row3: { display: 'grid', gridTemplateColumns: '1fr 1fr 80px', gap: 8, alignItems: 'end' },
   dtHeader: {
     display: 'flex',
@@ -239,29 +239,31 @@ export default function ShiftForm() {
             </button>
           </div>
           {downtimes.map((dt, i) => (
-            <div key={i} style={{ ...s.row3, marginBottom: 8, gridTemplateColumns: '1fr 100px 80px' }}>
-              <div>
-                <select value={dt.reason} onChange={e => setDt(i, 'reason', e.target.value)}>
-                  {REASONS.map(r => <option key={r}>{r}</option>)}
-                </select>
-                <div style={s.checkRow}>
-                  <input type="checkbox" id={`p${i}`} checked={dt.planned}
-                    onChange={e => setDt(i, 'planned', e.target.checked)}
-                    style={{ width: 'auto' }} />
-                  <label htmlFor={`p${i}`} style={{ fontSize: 12, color: 'var(--muted)' }}>
-                    Плановый
-                  </label>
+            <div key={i} style={{ marginBottom: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 80px 36px', gap: 8, alignItems: 'end' }}>
+                <div>
+                  <select value={dt.reason} onChange={e => setDt(i, 'reason', e.target.value)}>
+                    {REASONS.map(r => <option key={r}>{r}</option>)}
+                  </select>
                 </div>
+                <div>
+                  <label style={s.label}>Мин</label>
+                  <input type="number" value={dt.minutes} placeholder="30"
+                    onChange={e => setDt(i, 'minutes', e.target.value)} />
+                </div>
+                <button style={s.removeBtn}
+                  onClick={() => setDowntimes(ds => ds.filter((_, idx) => idx !== i))}>
+                  ✕
+                </button>
               </div>
-              <div>
-                <label style={s.label}>Минуты</label>
-                <input type="number" value={dt.minutes} placeholder="30"
-                  onChange={e => setDt(i, 'minutes', e.target.value)} />
+              <div style={s.checkRow}>
+                <input type="checkbox" id={`p${i}`} checked={dt.planned}
+                  onChange={e => setDt(i, 'planned', e.target.checked)}
+                  style={{ width: 'auto' }} />
+                <label htmlFor={`p${i}`} style={{ fontSize: 12, color: 'var(--muted)' }}>
+                  Плановый
+                </label>
               </div>
-              <button style={s.removeBtn}
-                onClick={() => setDowntimes(ds => ds.filter((_, idx) => idx !== i))}>
-                ✕
-              </button>
             </div>
           ))}
         </div>

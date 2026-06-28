@@ -5,7 +5,7 @@ import {
   Tooltip, ResponsiveContainer, ReferenceLine
 } from 'recharts'
 
-const API = "http://192.168.1.193:8000/api/v1"
+const API = "/api/v1"
 const EQUIPMENT_ID = '11111111-1111-1111-1111-111111111111'
 
 const s = {
@@ -19,7 +19,7 @@ const s = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 24
   },
   title: { fontSize: 20, fontWeight: 600 },
   sub: { fontSize: 12, color: 'var(--muted)', marginTop: 2 },
@@ -34,7 +34,7 @@ const s = {
   },
   metricsGrid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(2, 1fr)',
     gap: 12,
   },
   metricCard: {
@@ -121,7 +121,7 @@ export default function Dashboard() {
   useEffect(() => {
     axios.get(`${API}/dashboard/${EQUIPMENT_ID}`)
       .then(r => setData(r.data))
-      .catch(e => setError(e.message))
+      .catch(e => setError(JSON.stringify({msg: e.message, code: e.code, url: e.config?.url})))
       .finally(() => setLoading(false))
   }, [])
 

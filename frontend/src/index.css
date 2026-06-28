@@ -30,7 +30,7 @@ input, select, textarea {
   border-radius: var(--radius);
   color: var(--text);
   font: inherit;
-  padding: 8px 12px;
+  padding: 8px 36px 8px 12px;
   width: 100%;
   transition: border-color .15s;
 }
